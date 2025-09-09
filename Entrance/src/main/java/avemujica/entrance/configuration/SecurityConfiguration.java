@@ -1,11 +1,13 @@
 package avemujica.entrance.configuration;
 
 import avemujica.common.entity.RestBean;
+import avemujica.common.utils.Jwt;
 import avemujica.entrance.filter.JwtAuthenticationFilter;
 import avemujica.entrance.filter.RequestLogFilter;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +18,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +30,10 @@ public class SecurityConfiguration {
     @Resource
     RequestLogFilter requestLogFilter;
 
+    @Resource
+    Jwt jwtUtils;
 
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
@@ -37,17 +41,17 @@ public class SecurityConfiguration {
                         )
                 .formLogin(conf->conf
                         .loginProcessingUrl("/api/auth/login")
-                        .failureHandler()
-                        .successHandler()
+                        .failureHandler(this::handleProcess)
+                        .successHandler(this::handleProcess)
                         .permitAll()
                 )
                 .logout(conf->conf
                         .logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler()
+                        .logoutSuccessHandler(this::onLogoutSuccess)
                 )
                 .exceptionHandling(conf->conf
-                        .accessDeniedHandler()
-                        .authenticationEntryPoint()
+                        .accessDeniedHandler(this::handleProcess)
+                        .authenticationEntryPoint(this::handleProcess)
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(conf->conf
@@ -60,6 +64,7 @@ public class SecurityConfiguration {
 
     }
 
+    //四个处理一次解决
     private void handleProcess(HttpServletRequest req,
                                HttpServletResponse res,
                                Object exceptionOrAuthentication) throws IOException {
@@ -75,8 +80,18 @@ public class SecurityConfiguration {
             User user = (User) authentication.getPrincipal();
             //todo 比对数据库
             //todo jwt令牌生成，与过期时间设置
+            //String jwt = jwtUtils.createJwt(user,)
         }
     }
 
+    private void onLogoutSuccess(HttpServletRequest req,
+                                 HttpServletResponse res,
+                                 Object exceptionOrAuthentication) throws IOException {
+        res.setContentType("application/json;charset=UTF-8");
+        PrintWriter writer = res.getWriter();
+        String authorization = req.getHeader("Authorization");
+        //todo 验证Jwt令牌
+        writer.write(RestBean.failure(400,"未能正常退出").asJsonString());
+    }
 
 }

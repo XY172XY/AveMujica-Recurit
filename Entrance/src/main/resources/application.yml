@@ -1,8 +1,25 @@
 spring:
   application:
     name: Entrance
+  datasource:
+    url: jdbc:postgresql://172.24.122.36:5432/postgres
+    name: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
 
+
+  security:
+    jwt:
+      key: 'AveMujica'
+      expire: 72
+      limit:
+        base: 20
+        upgrade: 200
+        frequency: 30
+    filter:
+      order: -100
 server:
   port: 8080
   servlet:
     context-path: /AveMujica
+
