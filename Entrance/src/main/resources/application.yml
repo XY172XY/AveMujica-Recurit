@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Entrance
+
+server:
+  port: 8080
+  servlet:
+    context-path: /AveMujica
