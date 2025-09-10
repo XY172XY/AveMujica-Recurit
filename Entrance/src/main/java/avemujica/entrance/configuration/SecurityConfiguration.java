@@ -1,6 +1,7 @@
 package avemujica.entrance.configuration;
 
 import avemujica.common.entity.RestBean;
+import avemujica.common.utils.Const;
 import avemujica.common.utils.Jwt;
 import avemujica.entrance.filter.JwtAuthenticationFilter;
 import avemujica.entrance.filter.RequestLogFilter;
@@ -43,7 +44,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
-                                .anyRequest().permitAll()
+                                .requestMatchers("/AveMujica/api/auth/**","/error").permitAll()
+                                .requestMatchers("/AveMujica/").permitAll()
+                                .anyRequest().hasAnyRole(Const.ROLE_ADMIN,Const.ROLE_NORMAL)
                         )
                 .formLogin(conf->conf
                         .loginProcessingUrl("/api/auth/login")

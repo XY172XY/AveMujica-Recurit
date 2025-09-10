@@ -132,7 +132,7 @@ public class Jwt {
 
     //jwt初步处理
     private String convertToken(String jwt) {
-        if(jwt==null || !jwt.startsWith("Bearer ")){
+        if(jwt == null || !jwt.startsWith("Bearer ")){
             return null;
         }
         return jwt.substring(7);

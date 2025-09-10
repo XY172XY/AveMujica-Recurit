@@ -9,18 +9,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-
+@RabbitListener(queues = "mailQueue",messageConverter = "jacksonConverter")
 @Component
-@RabbitListener(queues = "email")
 public class MailQueueListener {
     @Resource
     JavaMailSender mailSender;
 
-    @Value("${spring.mail.host}")
+    @Value("${spring.mail.username}")
     String hostMail;
 
     @RabbitHandler
     public void processMailQueue(Map<String,Object> data) throws Exception {
+        System.out.println("我发送了邮件");
         String email = data.get("email").toString();
         Integer code = (Integer) data.get("code");
         SimpleMailMessage message = switch (data.get("type").toString()){
