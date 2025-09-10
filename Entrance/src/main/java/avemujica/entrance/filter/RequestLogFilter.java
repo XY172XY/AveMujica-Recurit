@@ -37,7 +37,7 @@ public class RequestLogFilter extends OncePerRequestFilter {
             long startTime = System.currentTimeMillis();
             //处理开始
             this.logRequestStart(request);
-            //这是一个response的包装类，有一些增强的功能
+            //这是一个response的包装类,直接解决需要多次拿取流数据的问题
             ContentCachingResponseWrapper wrapper = new ContentCachingResponseWrapper(response);
             //继续过滤
             filterChain.doFilter(request, wrapper);

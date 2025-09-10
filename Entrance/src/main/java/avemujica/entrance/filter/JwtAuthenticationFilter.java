@@ -1,9 +1,7 @@
 package avemujica.entrance.filter;
 
-import avemujica.common.entity.RestBean;
 import avemujica.common.utils.Const;
 import avemujica.common.utils.Jwt;
-import avemujica.usermanage.entity.dto.Account;
 import avemujica.usermanage.servlet.AccountService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.Resource;
@@ -11,8 +9,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

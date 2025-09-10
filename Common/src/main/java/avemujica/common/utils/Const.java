@@ -24,4 +24,6 @@ public final class Const {
     //用户角色
     public final static String ROLE_ADMIN = "admin";
     public final static String ROLE_NORMAL = "user";
+    //nonce
+    public final static String NONCE_RECORD = "nonce:";
 }

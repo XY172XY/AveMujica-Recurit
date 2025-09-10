@@ -36,9 +36,14 @@ spring:
         frequency: 30
     filter:
       order: -100
+
 server:
   port: 8080
   servlet:
     context-path: /AveMujica
+
+nonce:
+  expire:
+    seconds: 3600
 
 

@@ -38,7 +38,7 @@ public class MailQueueListener {
         mailSender.send(message);
     }
 
-    private SimpleMailMessage createMessage(String title, String content, String email){
+    private SimpleMailMessage createMessage(String title, String content, String email) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(title);
         message.setText(content);
