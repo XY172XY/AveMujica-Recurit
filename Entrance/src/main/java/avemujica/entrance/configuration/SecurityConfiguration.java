@@ -4,6 +4,9 @@ import avemujica.common.entity.RestBean;
 import avemujica.common.utils.Jwt;
 import avemujica.entrance.filter.JwtAuthenticationFilter;
 import avemujica.entrance.filter.RequestLogFilter;
+import avemujica.usermanage.entity.dto.Account;
+import avemujica.usermanage.entity.vo.response.AuthorizeVO;
+import avemujica.usermanage.servlet.AccountService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +32,9 @@ public class SecurityConfiguration {
 
     @Resource
     RequestLogFilter requestLogFilter;
+
+    @Resource
+    AccountService accountService;
 
     @Resource
     Jwt jwtUtils;
@@ -78,9 +84,16 @@ public class SecurityConfiguration {
         }
         else if(exceptionOrAuthentication instanceof Authentication authentication){
             User user = (User) authentication.getPrincipal();
-            //todo 比对数据库
-            //todo jwt令牌生成，与过期时间设置
-            //String jwt = jwtUtils.createJwt(user,)
+            Account account = accountService.findAccountByNameOrEmail(user.getUsername());
+            String jwt = jwtUtils.createJwt(user,account.getUsername(),account.getId());
+            if(jwt == null){
+                writer.write(RestBean.forbidden("验证频繁，请稍后再试").asJsonString());
+            }
+            else{
+                AuthorizeVO vo = account.asViewObject(AuthorizeVO.class,o->o.setToken(jwt));
+                vo.setExpire(jwtUtils.expireTime());
+                writer.write(RestBean.success(vo).asJsonString());
+            }
         }
     }
 
@@ -89,8 +102,12 @@ public class SecurityConfiguration {
                                  Object exceptionOrAuthentication) throws IOException {
         res.setContentType("application/json;charset=UTF-8");
         PrintWriter writer = res.getWriter();
+        //authorization 实际为携带的jwt令牌
         String authorization = req.getHeader("Authorization");
-        //todo 验证Jwt令牌
+        if(jwtUtils.invalidateJwt(authorization)){
+            writer.write(RestBean.success("推出登录成功").asJsonString());
+            return;
+        }
         writer.write(RestBean.failure(400,"未能正常退出").asJsonString());
     }
 

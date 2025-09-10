@@ -14,4 +14,12 @@
     <name>UserManage</name>
     <description>UserManage</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>AveMujica</groupId>
+            <artifactId>Common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

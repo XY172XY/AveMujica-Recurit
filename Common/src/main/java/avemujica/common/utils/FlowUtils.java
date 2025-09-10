@@ -15,7 +15,7 @@ public class FlowUtils {
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
-    //简化代码使用，内部行为接口
+    //简化代码使用，内部行为接口,目前仅用于判断是否封禁和是否延长封禁时间
     private interface Action{
         boolean run(boolean overlock);
     }

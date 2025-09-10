@@ -6,8 +6,26 @@ spring:
     name: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver
-
-
+  mail:
+    host: smtp.163.com
+    username: javastudy111@163.com
+    password: SChkDPJx6minRPkf
+  rabbitmq:
+    addresses: 172.24.122.36
+    username: admin
+    password: 123456
+    virtual-host: /test
+  web:
+    verify:
+      mail-limit: 60
+    flow:
+      period: 5
+      limit: 100
+      block: 30
+#    cors:
+#      origin: '*'
+#      credentials: false
+#      methods: '*'
   security:
     jwt:
       key: 'AveMujica'
@@ -22,4 +40,5 @@ server:
   port: 8080
   servlet:
     context-path: /AveMujica
+
 

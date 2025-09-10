@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class Jwt {
 
     @Resource
@@ -83,6 +85,19 @@ public class Jwt {
         }
         catch (JWTVerificationException e){
             return null;
+        }
+    }
+
+    //给Security使用,验证jwt并拉黑
+    public boolean invalidateJwt(String headerToken){
+        String token = this.convertToken(headerToken);
+        Algorithm algorithm = Algorithm.HMAC256(key);
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        try {
+            DecodedJWT verify = jwtVerifier.verify(token);
+            return deleteJwt(verify.getId(), verify.getExpiresAt());
+        } catch (JWTVerificationException e) {
+            return false;
         }
     }
 
