@@ -1,8 +1,10 @@
 package avemujica.usermanage.controller;
 
+import avemujica.common.entity.MessageHandle;
 import avemujica.common.entity.RestBean;
 import avemujica.usermanage.entity.vo.request.EmailResetVO;
-import avemujica.usermanage.servlet.AccountService;
+import avemujica.usermanage.entity.vo.request.RegisterAccountVO;
+import avemujica.usermanage.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,14 +13,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Supplier;
-
 @RestController
-public class AuthorizeController {
+@RequestMapping("/api/auth")
+public class AuthorizeController implements MessageHandle {
     @Resource
     AccountService accountService;
 
-    @GetMapping("/ask-code")
+    @PostMapping("/ask-code")
     @Operation(summary = "请求邮件验证码")
     public RestBean<Void> askVerifyCode(@RequestParam @Email String email,
                                         @RequestParam @Pattern(regexp = "(reset|modify|register)")  String type,
@@ -34,12 +35,10 @@ public class AuthorizeController {
                 accountService.resetEmailAccountPassword(vo));
     }
 
-
-    private <T> RestBean<T> messageHandle(Supplier<String> action){
-        String message = action.get();
-        if(message == null)
-            return RestBean.success();
-        else
-            return RestBean.failure(400, message);
+    @PostMapping("/register")
+    @Operation(summary = "注册用户")
+    public RestBean<Void> registerAccount(@RequestBody @Valid RegisterAccountVO vo){
+        return this.messageHandle(()->
+                accountService.registerAccount(vo));
     }
 }

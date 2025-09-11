@@ -1,7 +1,6 @@
 package avemujica.entrance;
 
 import jakarta.annotation.Resource;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,7 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-@ComponentScan(value = "avemujica")
+@ComponentScan(value = "avemujica.*")
 public class EntranceApplication {
 
     public static void main(String[] args) {

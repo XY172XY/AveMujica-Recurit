@@ -28,19 +28,16 @@
 
         <dependency>
             <groupId>AveMujica</groupId>
-            <artifactId>QuestionManage</artifactId>
+            <artifactId>UserManage</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>AveMujica</groupId>
-            <artifactId>UserManage</artifactId>
+            <artifactId>Question</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
+
     </dependencies>
 
     <build>

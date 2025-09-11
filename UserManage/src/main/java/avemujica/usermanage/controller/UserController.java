@@ -4,16 +4,14 @@ import avemujica.common.entity.RestBean;
 import avemujica.common.utils.Const;
 import avemujica.usermanage.entity.vo.request.ChangePasswordVO;
 import avemujica.usermanage.entity.vo.request.ModifyEmailVO;
-import avemujica.usermanage.servlet.AccountService;
+import avemujica.usermanage.service.AccountService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
     @Resource
     AccountService service;

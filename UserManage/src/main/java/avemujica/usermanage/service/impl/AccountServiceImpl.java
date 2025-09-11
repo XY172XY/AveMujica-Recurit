@@ -1,4 +1,4 @@
-package avemujica.usermanage.servlet.impl;
+package avemujica.usermanage.service.impl;
 
 import avemujica.common.utils.Const;
 import avemujica.common.utils.FlowUtils;
@@ -6,9 +6,9 @@ import avemujica.usermanage.entity.dto.Account;
 import avemujica.usermanage.entity.vo.request.ConfirmResetVO;
 import avemujica.usermanage.entity.vo.request.EmailResetVO;
 import avemujica.usermanage.entity.vo.request.ModifyEmailVO;
+import avemujica.usermanage.entity.vo.request.RegisterAccountVO;
 import avemujica.usermanage.mapper.AccountMapper;
-import avemujica.usermanage.servlet.AccountService;
-import com.alibaba.fastjson2.JSONArray;
+import avemujica.usermanage.service.AccountService;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
@@ -78,6 +78,26 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
                     .set(Const.VERIFY_EMAIL_DATA + email, String.valueOf(code), 3, TimeUnit.MINUTES);
             return null;
         }
+    }
+
+    //注册账户
+    @Override
+    public String registerAccount(RegisterAccountVO vo){
+        String code = getEmailVerifyCode(vo.getEmail());
+        if(code == null)return "请先获取验证码";
+        if(!code.equals(vo.getCode()))return "验证码错误";
+        this.deleteEmailVerifyCode(vo.getEmail());
+        Account account = this.findAccountByNameOrEmail(vo.getEmail());
+        if(account != null) return "该邮箱账号已经被其他账号绑定";
+        account = new Account()
+                .setUsername(vo.getUsername())
+                .setPassword(passwordEncoder.encode(vo.getPassword()))
+                .setEmail(vo.getEmail())
+                .setRole(Const.ROLE_NORMAL);
+        if(this.save(account)){
+            return null;
+        }
+        return "意外失败，请重新尝试";
     }
 
     @Override

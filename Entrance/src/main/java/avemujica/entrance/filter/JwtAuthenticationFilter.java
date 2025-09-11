@@ -2,7 +2,7 @@ package avemujica.entrance.filter;
 
 import avemujica.common.utils.Const;
 import avemujica.common.utils.Jwt;
-import avemujica.usermanage.servlet.AccountService;
+import avemujica.usermanage.service.AccountService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;

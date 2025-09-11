@@ -7,7 +7,7 @@ import avemujica.entrance.filter.JwtAuthenticationFilter;
 import avemujica.entrance.filter.RequestLogFilter;
 import avemujica.usermanage.entity.dto.Account;
 import avemujica.usermanage.entity.vo.response.AuthorizeVO;
-import avemujica.usermanage.servlet.AccountService;
+import avemujica.usermanage.service.AccountService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,7 +44,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
-                                .requestMatchers("/AveMujica/api/auth/**","/error").permitAll()
+                                .requestMatchers("/api/auth/**","/error").permitAll()
                                 .requestMatchers("/AveMujica/").permitAll()
                                 .anyRequest().hasAnyRole(Const.ROLE_ADMIN,Const.ROLE_NORMAL)
                         )

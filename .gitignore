@@ -1,6 +1,6 @@
 # 项目排除路径
 /Charts/target/
 /Entrance/target/
-/QuestionManage/target/
+/Question/target/
 /UserManage/target/
 .idea
