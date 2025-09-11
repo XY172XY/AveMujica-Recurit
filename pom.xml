@@ -23,6 +23,7 @@
         <module>Entrance</module>
         <module>QuestionManage</module>
         <module>UserManage</module>
+        <module>QuestionManage</module>
     </modules>
 
     <!-- 版本号管理 -->
