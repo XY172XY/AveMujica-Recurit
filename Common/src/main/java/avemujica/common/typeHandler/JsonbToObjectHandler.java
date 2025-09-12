@@ -62,7 +62,7 @@ public class JsonbToObjectHandler extends JacksonTypeHandler {
     }
 
 
-    //读数据时，把JSONB类型的字段转成java对象
+    //读数据时，把JSONB或JSON类型的字段转成java对象
     private Object convertDbToJavaObject(Object v) {
         //不是null
         if (Objects.isNull(v)) {
@@ -87,7 +87,6 @@ public class JsonbToObjectHandler extends JacksonTypeHandler {
         if (StringUtils.isBlank(pv)) {
             return v;
         }
-
         //解析json
         try {
             return parse(pv);

@@ -3,6 +3,7 @@ package avemujica.entrance.configuration;
 import avemujica.common.entity.RestBean;
 import avemujica.common.utils.Const;
 import avemujica.common.utils.Jwt;
+import avemujica.entrance.filter.ContentCachingFilter;
 import avemujica.entrance.filter.JwtAuthenticationFilter;
 import avemujica.entrance.filter.RequestLogFilter;
 import avemujica.usermanage.entity.dto.Account;
@@ -36,6 +37,9 @@ public class SecurityConfiguration {
 
     @Resource
     AccountService accountService;
+
+    @Resource
+    ContentCachingFilter contentCachingFilter;
 
     @Resource
     Jwt jwtUtils;

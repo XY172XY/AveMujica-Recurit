@@ -17,6 +17,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     public String addQuestion(QuestionAddVO vo){
         Question question = new Question(vo);
         System.out.println(JSON.toJSONString(question));
+
         Question exit = this.query()
                 .select("id")
                 .eq("question_order",vo.getQuestionOrder())

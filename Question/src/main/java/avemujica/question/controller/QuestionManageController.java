@@ -17,8 +17,15 @@ public class QuestionManageController implements MessageHandle{
 
     @CheckNonce
     @PostMapping("/add")
-    public RestBean<String> addQuestion(@RequestBody SafeRequest<QuestionAddVO> SFvo){
-        QuestionAddVO vo = SFvo.getVO();
+    public RestBean<String> addQuestion(@RequestBody QuestionAddVO vo,
+                                        @RequestParam String nonce,
+                                        @RequestParam Long timestamp) {
         return this.messageHandle(()->questionService.addQuestion(vo));
     }
+
+//    @CheckNonce
+//    @PostMapping
+//    public RestBean<String> updateQuestion(@RequestBody SafeRequest<QuestionAddVO> SFvo){
+//
+//    }
 }

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
@@ -38,13 +39,13 @@ public class RequestLogFilter extends OncePerRequestFilter {
             //处理开始
             this.logRequestStart(request);
             //这是一个response的包装类,直接解决需要多次拿取流数据的问题
-            ContentCachingResponseWrapper wrapper = new ContentCachingResponseWrapper(response);
+            ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
             //继续过滤
-            filterChain.doFilter(request, wrapper);
+            filterChain.doFilter(request, responseWrapper);
             //结束处理
-            this.logRequestEnd(wrapper, startTime);
+            this.logRequestEnd(responseWrapper, startTime);
             //处理完后解除包装状态
-            wrapper.copyBodyToResponse();
+            responseWrapper.copyBodyToResponse();
         }
     }
 

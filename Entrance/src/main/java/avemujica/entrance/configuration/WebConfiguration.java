@@ -21,7 +21,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(nonceInterceptor)
-        .addPathPatterns("/AveMujica/api/**");
+        .addPathPatterns("/api/**");
     }
 
     @Bean
