@@ -20,7 +20,7 @@ public class FlowUtils {
         boolean run(boolean overlock);
     }
 
-    //核心函数internalCheck
+    //核心函数Check
     private boolean Check(String key,int frequency,int period,Action action){
         if(stringRedisTemplate.hasKey(key)){
             //查看已经请求次数

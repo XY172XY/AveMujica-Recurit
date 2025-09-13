@@ -14,11 +14,9 @@ public final class Const {
     public final static String VERIFY_EMAIL_DATA = "verify:email:data:";
     //过滤器优先级
     public final static int ORDER_FLOW_LIMIT = -101;
-    public final static int ORDER_CORS = -102;
     //请求自定义属性
     public final static String ATTR_USER_ID = "userId";
     public final static String ATTR_USER_ROLE = "userRole";
-    public final static String ATTR_CLIENT = "client";
     //消息队列
     public final static String MQ_MAIL = "mailExchange";
     //用户角色
@@ -26,4 +24,15 @@ public final class Const {
     public final static String ROLE_NORMAL = "user";
     //nonce
     public final static String NONCE_RECORD = "nonce:";
+
+    //布隆过滤器
+    public final static String BLOOM_USERNAME = "bloomUsername";
+    public final static String BLOOM_SUBMIT = "bloomSubmit";
+
+    //提交频率限制
+    public final static String SUBMIT_LIMIT = "submit:limit:";
+
+    //Minio
+    public final static String BUCKET = "submit";
+
 }

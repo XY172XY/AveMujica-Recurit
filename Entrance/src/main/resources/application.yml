@@ -16,6 +16,10 @@ spring:
     password: 123456
     virtual-host: test
   web:
+    submit:
+      limit: 5
+    file:
+      limit: 60
     verify:
       mail-limit: 60
     flow:
@@ -37,6 +41,13 @@ spring:
     filter:
       order: -100
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 2000ms
+
 server:
   port: 8080
   servlet:
@@ -45,5 +56,12 @@ server:
 nonce:
   expire:
     seconds: 3600
+
+minio:
+  endpoint: http://172.24.122.36:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: submit
+  presign-expire-seconds: 6000  # 预签名URL有效期(秒)
 
 

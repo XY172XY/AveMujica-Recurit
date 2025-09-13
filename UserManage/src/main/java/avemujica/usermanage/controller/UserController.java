@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
     @Resource
     AccountService service;

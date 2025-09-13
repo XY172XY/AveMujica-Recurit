@@ -9,9 +9,13 @@ import avemujica.usermanage.entity.vo.request.ModifyEmailVO;
 import avemujica.usermanage.entity.vo.request.RegisterAccountVO;
 import avemujica.usermanage.mapper.AccountMapper;
 import avemujica.usermanage.service.AccountService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -21,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +87,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
 
     //注册账户
     @Override
-    public String registerAccount(RegisterAccountVO vo){
+    public String registerAccount(@NotNull RegisterAccountVO vo){
         String code = getEmailVerifyCode(vo.getEmail());
         if(code == null)return "请先获取验证码";
         if(!code.equals(vo.getCode()))return "验证码错误";
