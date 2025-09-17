@@ -46,8 +46,8 @@ public class NonceInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String nonce = request.getParameter("nonce");
-        long timestamp = Long.parseLong(request.getParameter("timestamp"));
+        String nonce = request.getHeader("X-Nonce");
+        long timestamp = Long.parseLong(request.getHeader("X-Timestamp"));
 
         try{
             if(StringUtils.isEmpty(nonce)){
@@ -56,11 +56,11 @@ public class NonceInterceptor implements HandlerInterceptor {
                 return false;
             }
 
-//            if(System.currentTimeMillis() - timestamp > 5*60*1000){
-//                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//                response.getWriter().write(RestBean.forbidden("Request expired or invalid timestamp").asJsonString());
-//                return false;
-//            }
+            if(System.currentTimeMillis() - timestamp > 5*60*1000){
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write(RestBean.forbidden("Request expired or invalid timestamp").asJsonString());
+                return false;
+            }
 
             String key = Const.NONCE_RECORD + nonce;
             boolean notExists = Boolean.TRUE.equals(stringRedisTemplate

@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/me")
 public class UserController {
     @Resource
     AccountService service;
 
-    @PostMapping("/change-password")
+    @PutMapping("/password")
     public RestBean<Void> changePassword(@RequestBody @Valid ChangePasswordVO vo,
                                          @RequestAttribute(Const.ATTR_USER_ID) int userId) {
         return service.changePassword(userId, vo.getPassword(), vo.getNew_password()) ?
                 RestBean.success() : RestBean.failure(401, "原密码输入错误！");
     }
 
-    @PostMapping("/modify-email")
+    @PutMapping("/email")
     public RestBean<Void> modifyEmail(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid ModifyEmailVO vo) {
         String result = service.modifyEmail(id, vo);
@@ -33,6 +33,4 @@ public class UserController {
             return RestBean.failure(401, result);
         }
     }
-
-
 }

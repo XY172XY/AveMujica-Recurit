@@ -26,10 +26,6 @@ spring:
       period: 5
       limit: 100
       block: 30
-#    cors:
-#      origin: '*'
-#      credentials: false
-#      methods: '*'
   security:
     jwt:
       key: 'AveMujica'
@@ -51,7 +47,7 @@ spring:
   cache:
     cache-names: questionCache
     caffeine:
-      spec: maximumSize=5000,expireAfterWrite=60s  # L1 命中 120s 默认配置
+      spec: maximumSize=5000,expireAfterWrite=60s
 
 server:
   port: 8080
@@ -64,18 +60,17 @@ nonce:
 
 minio:
   endpoint: http://172.24.122.36:9000
-  access-key: minioadmin
-  secret-key: minioadmin
   bucket: submit
-  presign-expire-seconds: 6000  # 预签名URL有效期(秒)
+  presign-expire-seconds: 6000
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+    cache-enabled: true
 
 custom:
   cache:
-    redis-ttl-seconds: 300       # L2 主 TTL（再加抖动）
+    redis-ttl-seconds: 300
     jitter-seconds: 60
     bloom:
       name: bf:question

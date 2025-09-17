@@ -20,7 +20,7 @@ public class AuthorizeController implements MessageHandle {
     @Resource
     AccountService accountService;
 
-    @PostMapping("/ask-code")
+    @PostMapping("/verify-code")
     @Operation(summary = "请求邮件验证码")
     public RestBean<Void> askVerifyCode(@RequestParam @Email String email,
                                         @RequestParam @Pattern(regexp = "(reset|modify|register)") String type,
@@ -29,23 +29,17 @@ public class AuthorizeController implements MessageHandle {
                 accountService.registerEmailVerifyCode(type, String.valueOf(email), request.getRemoteAddr()));
     }
 
-    @PostMapping("/reset-password")
+    @PutMapping("/account/password")
     @Operation(summary = "密码重置操作")
     public RestBean<Void> resetPassword(@RequestBody @Valid EmailResetVO vo) {
         return this.messageHandle(() ->
                 accountService.resetEmailAccountPassword(vo));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/account")
     @Operation(summary = "注册用户")
     public RestBean<Void> registerAccount(@RequestBody @Valid RegisterAccountVO vo) {
         return this.messageHandle(() ->
                 accountService.registerAccount(vo));
     }
-
-//    @GetMapping("/test")
-//    public RestBean<String> test(){
-//        bloomFilterUtils.testBooleanFilter();
-//        return RestBean.success();
-//    }
 }

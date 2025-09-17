@@ -7,11 +7,11 @@ import avemujica.question.service.CorrectService;
 import avemujica.question.service.FileDownloadService;
 import avemujica.question.service.SubmitService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.RegEx;
 import java.util.List;
 
 @RestController
@@ -26,27 +26,27 @@ public class CorrectController implements MessageHandle {
     @Resource
     CorrectService correctService;
 
-    @PostMapping("/get-corrected-submit")
-    public RestBean<List<QuestionSubmit>> getCorrectedSubmit(@RequestParam Integer question_id,
-                                                             @RequestParam Integer page,
-                                                             @RequestParam Integer size) {
-        return RestBean.success(submitService.getCorrectedSubmitList(question_id,page,size));
+    @GetMapping("/questions/{questionId}/submits")
+    public RestBean<List<QuestionSubmit>> getSubmit(@PathVariable Integer questionId,
+                                                             @RequestParam(defaultValue = "1") Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) Integer size,
+                                                             @RequestParam @Pattern(regexp = "(uncorrect|correct)")  String status) {
+        if ("corrected".equalsIgnoreCase(status)) {
+            return RestBean.success(submitService.getCorrectedSubmitList(questionId, page, size));
+        } else if ("uncorrected".equalsIgnoreCase(status)) {
+            return RestBean.success(submitService.getUncorrectedSubmitList(questionId, page, size));
+        } else {
+            return RestBean.failure(400, "status 参数必须是 corrected 或 uncorrected");
+        }
     }
 
-    @PostMapping("/get-uncorrected-submit")
-    public RestBean<List<QuestionSubmit>> getUncorrectedSubmit(@RequestParam Integer question_id,
-                                                               @RequestParam Integer page,
-                                                               @RequestParam Integer size) {
-        return RestBean.success(submitService.getUncorrectedSubmitList(question_id,page,size));
-    }
-
-    @PostMapping("/down-load")
-    public RestBean<String> downLoad(@RequestParam String fileName) {
+    @GetMapping("/files/{fileName}")
+    public RestBean<String> downLoad(@PathVariable String fileName) {
         return RestBean.success(fileDownloadService.getDownloadUrl(fileName));
     }
 
-    @PostMapping("/correct")
-    public RestBean<String> correct(@RequestParam Integer submitId,
+    @PutMapping("/submits/{submitId}/score")
+    public RestBean<String> correct(@PathVariable Integer submitId,
                                     @RequestParam Integer score,
                                     @RequestParam Integer questionId) {
         return messageHandle(()->correctService.correct(submitId,score,questionId));
