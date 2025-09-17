@@ -14,12 +14,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionSubmitVO {
-    @TableId(type = IdType.AUTO)
     Integer id;
     Integer userId;
     Integer questionId;
     Integer originScore;
     String flag;
-    @TableField(typeHandler = JsonbToObjectHandler.class)
     Map<String,String> options;
 }

@@ -39,17 +39,14 @@ public class SecurityConfiguration {
     AccountService accountService;
 
     @Resource
-    ContentCachingFilter contentCachingFilter;
-
-    @Resource
     Jwt jwtUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
-                                .requestMatchers("/api/auth/**","/error").permitAll()
-                                .requestMatchers("/AveMujica/").permitAll()
+                                .requestMatchers("/api/auth/**","/error","/api/chart/**").permitAll()
+//                                .requestMatchers("/api/admin/**","/api/question/admin/**").hasRole(Const.ROLE_ADMIN)
                                 .anyRequest().hasAnyRole(Const.ROLE_ADMIN,Const.ROLE_NORMAL)
                         )
                 .formLogin(conf->conf
@@ -109,10 +106,10 @@ public class SecurityConfiguration {
                                  Object exceptionOrAuthentication) throws IOException {
         res.setContentType("application/json;charset=UTF-8");
         PrintWriter writer = res.getWriter();
-        //authorization 实际为携带的jwt令牌
+        //authorization 携带的jwt令牌
         String authorization = req.getHeader("Authorization");
         if(jwtUtils.invalidateJwt(authorization)){
-            writer.write(RestBean.success("推出登录成功").asJsonString());
+            writer.write(RestBean.success("退出登录成功").asJsonString());
             return;
         }
         writer.write(RestBean.failure(400,"未能正常退出").asJsonString());

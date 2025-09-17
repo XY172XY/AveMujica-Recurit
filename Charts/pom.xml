@@ -13,5 +13,19 @@
     <name>Charts</name>
     <description>Charts</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>AveMujica</groupId>
+            <artifactId>Question</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>AveMujica</groupId>
+            <artifactId>UserManage</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+
 
 </project>

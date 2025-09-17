@@ -19,6 +19,7 @@ public final class Const {
     public final static String ATTR_USER_ROLE = "userRole";
     //消息队列
     public final static String MQ_MAIL = "mailExchange";
+    public final static String MQ_CORRECT = "correctExchange";
     //用户角色
     public final static String ROLE_ADMIN = "admin";
     public final static String ROLE_NORMAL = "user";
@@ -34,5 +35,8 @@ public final class Const {
 
     //Minio
     public final static String BUCKET = "submit";
+
+    //IP过滤
+    public final static String IP_LIMIT = "ip:limit:";
 
 }

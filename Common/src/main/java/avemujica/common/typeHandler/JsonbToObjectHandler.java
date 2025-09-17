@@ -12,6 +12,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Objects;
 
 //这是一个针对postgresql Json Jsonb对象的万能转换器
@@ -19,7 +20,6 @@ import java.util.Objects;
 @MappedJdbcTypes({JdbcType.OTHER})
 @Slf4j
 public class JsonbToObjectHandler extends JacksonTypeHandler {
-    private static final PGobject jsonObject = new PGobject();
     private static final String JSONB = "jsonb";
     private static final String JSON = "json";
 
@@ -32,6 +32,7 @@ public class JsonbToObjectHandler extends JacksonTypeHandler {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
         if (ps != null) {
+            PGobject jsonObject = new PGobject();
             jsonObject.setType(JSONB);
             jsonObject.setValue(toJson(parameter));
             ps.setObject(i, jsonObject);
@@ -52,15 +53,11 @@ public class JsonbToObjectHandler extends JacksonTypeHandler {
         return convertDbToJavaObject(v);
     }
 
-    /**
-     * 读数据时，把JSONB类型的字段转成java对象
-     */
     @Override
     public Object getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         Object v = cs.getObject(columnIndex);
         return convertDbToJavaObject(v);
     }
-
 
     //读数据时，把JSONB或JSON类型的字段转成java对象
     private Object convertDbToJavaObject(Object v) {

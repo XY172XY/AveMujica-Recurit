@@ -10,26 +10,50 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfiguration {
     @Bean("mailQueue")
-    public Queue queue() {
+    public Queue mailQueue() {
         return QueueBuilder
                 .durable("mailQueue")
                 .build();
     }
 
     @Bean("mailExchange")
-    public Exchange exchange() {
+    public Exchange mailExchange() {
         return ExchangeBuilder
                 .directExchange("mailExchange")
                 .build();
     }
 
     @Bean("mailBinding")
-    public Binding binding(@Qualifier("mailQueue") Queue queue,
+    public Binding mailBinding(@Qualifier("mailQueue") Queue queue,
                            @Qualifier("mailExchange") Exchange exchange ) {
         return BindingBuilder
                 .bind(queue)
                 .to(exchange)
                 .with("mailQueue")
+                .noargs();
+    }
+
+    @Bean("correctQueue")
+    public Queue correctQueue() {
+        return  QueueBuilder
+                .durable("correctQueue")
+                .build();
+    }
+
+    @Bean("correctExchange")
+    public Exchange correctExchange() {
+        return ExchangeBuilder
+                .directExchange("correctExchange")
+                .build();
+    }
+
+    @Bean("correctBinding")
+    public Binding correctBinding(@Qualifier("correctQueue") Queue queue,
+                                  @Qualifier("correctExchange") Exchange exchange) {
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange)
+                .with("correctQueue")
                 .noargs();
     }
 

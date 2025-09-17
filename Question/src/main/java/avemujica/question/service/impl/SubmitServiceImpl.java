@@ -17,16 +17,16 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -40,6 +40,9 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
     @Resource
     MinioClient minioClient;
 
+    @Resource
+    RabbitTemplate rabbitTemplate;
+
     @Value("${spring.web.submit.limit}")
     int submitLimit;
 
@@ -49,31 +52,49 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
     @Override
     @Transactional
     public String submitFlag(QuestionSubmitVO vo, String address){
-            if(verifyLimit(address,submitLimit)){
-                return "请勿频繁提交";
-            }
+        if(!verifyLimit(address,submitLimit)){
+            return "请勿频繁提交";
+        }
         QuestionSubmit questionSubmit = new QuestionSubmit(vo);
-            QuestionSubmit lastSubmit = getLastSubmit(vo.getUserId(),vo.getQuestionId());
-            questionSubmit.setCount(lastSubmit != null ? lastSubmit.getCount() + 1 : 1);
-            Answer answer = answerMapper.selectOne(new QueryWrapper<Answer>()
-                    .select("flag_answer")
-                    .eq("question_id",vo.getQuestionId()));
-            if(answer == null) return "bad request: answer not exist";
-            if(answer.getFlagAnswer().equals(vo.getFlag())) questionSubmit.setScore(vo.getOriginScore());
-            else questionSubmit.setScore(0);
-            if(this.saveOrUpdate(questionSubmit)) return null;
-            return "保存失败";
+        QuestionSubmit lastSubmit = getLastSubmit(vo.getUserId(),vo.getQuestionId());
+        if(lastSubmit != null){
+            questionSubmit.setCount(lastSubmit.getCount() + 1);
+            questionSubmit.setId(lastSubmit.getId());
+        }
+        else {
+            questionSubmit.setCount(1);
+        }
+        Answer answer = answerMapper.selectOne(new QueryWrapper<Answer>()
+                .select("flag_answer")
+                .eq("question_id",vo.getQuestionId()));
+        if(answer == null) return "bad request: answer not exist";
+        if(answer.getFlagAnswer().equals(vo.getFlag())) questionSubmit.setScore(vo.getOriginScore());
+        else questionSubmit.setScore(0);
+        if(this.saveOrUpdate(questionSubmit)){
+            Map<String,String> map = new HashMap<>();
+            map.put("questionId",vo.getQuestionId().toString());
+            map.put("submitId",questionSubmit.getId().toString());
+            rabbitTemplate.convertAndSend("correctQueue",map);
+            return null;
+        }
+        return "保存失败";
     }
 
     @Transactional
     @Override
     public String submitChoice(QuestionSubmitVO vo, String address){
-        if(verifyLimit(address,submitLimit)){
+        if(!verifyLimit(address,submitLimit)){
             return "请勿频繁提交";
         }
         QuestionSubmit questionSubmit = new QuestionSubmit(vo);
         QuestionSubmit lastSubmit = getLastSubmit(vo.getUserId(),vo.getQuestionId());
-        questionSubmit.setCount(lastSubmit != null ? lastSubmit.getCount() + 1 : 1);
+        if(lastSubmit != null){
+            questionSubmit.setCount(lastSubmit.getCount() + 1);
+            questionSubmit.setId(lastSubmit.getId());
+        }
+        else {
+            questionSubmit.setCount(1);
+        }
         Answer answer = answerMapper.selectOne(new QueryWrapper<Answer>()
                 .select("choice_answer")
                 .eq("question_id",vo.getQuestionId()));
@@ -81,9 +102,15 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
 
         StringBuffer sb = new StringBuffer();
         int cnt = judgeScore(answer.getChoiceAnswer(),vo.getOptions(),sb);
-        float percentage = cnt / (float) questionSubmit.getCount();
+        float percentage = cnt / (float) answer.getChoiceAnswer().size();
         questionSubmit.setScore((int)(percentage*vo.getOriginScore()));
-        if(this.saveOrUpdate(questionSubmit)) return sb.toString();
+        if(this.saveOrUpdate(questionSubmit)){
+            Map<String,String> map = new HashMap<>();
+            map.put("questionId",vo.getQuestionId().toString());
+            map.put("submitId",questionSubmit.getId().toString());
+            rabbitTemplate.convertAndSend("correctQueue",map);
+            return sb.toString();
+        }
         return "保存失败";
     }
 
@@ -147,7 +174,7 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
     @Override
     public SubmitRecord getRecordByUserIdAndQuestionId(Integer userid,Integer questionId) {
         QuestionSubmit qs = getOne( new QueryWrapper<QuestionSubmit>()
-                .select("deadline","score","count")
+                .select("time_record","score","count")
                 .eq("user_id",userid)
                 .eq("question_id",questionId));
         if(qs == null) return new SubmitRecord(null,0,0);
@@ -177,7 +204,7 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
     private int judgeScore(Map<String,String> answer,Map<String,String> options,StringBuffer wrong){
         int score = 0;
         for(String key : answer.keySet()){
-           if(options.get(key).equals(answer.get(key)))wrong.append(key).append(",");
+           if(!options.get(key).equals(answer.get(key)))wrong.append(key).append(",");
            else score++;
         }
         return score;
@@ -185,7 +212,7 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, QuestionSubmit>
 
     private QuestionSubmit getLastSubmit(Integer id,Integer questionId){
         return this.getOne(new QueryWrapper<QuestionSubmit>()
-                .select("count")
+                .select("id","count")
                 .eq("user_id", id)
                 .eq("question_id",questionId));
     }

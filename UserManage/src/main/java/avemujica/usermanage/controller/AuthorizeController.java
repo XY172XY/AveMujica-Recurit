@@ -3,7 +3,6 @@ package avemujica.usermanage.controller;
 import avemujica.common.entity.MessageHandle;
 import avemujica.common.entity.RestBean;
 
-import avemujica.common.utils.BloomFilterUtils;
 import avemujica.usermanage.entity.vo.request.EmailResetVO;
 import avemujica.usermanage.entity.vo.request.RegisterAccountVO;
 import avemujica.usermanage.service.AccountService;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthorizeController implements MessageHandle {
     @Resource
     AccountService accountService;
-
-    @Resource
-    BloomFilterUtils bloomFilterUtils;
 
     @PostMapping("/ask-code")
     @Operation(summary = "请求邮件验证码")

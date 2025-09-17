@@ -19,17 +19,17 @@ public class RedissionConfiguration {
     @Value("${spring.data.redis.database}")
     private Integer database;
 
-//    @Value("${spring.data.redis.password}")
-//    private String password;
+    @Value("${spring.data.redis.password}")
+    private String password;
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public RedissonClient redissonClient() {
         Config config = new Config();
         SingleServerConfig singleServerConfig = config.useSingleServer();
         String address = String.format("redis://%s:%d", host, port);
         singleServerConfig.setAddress(address);
         singleServerConfig.setDatabase(database);
-        //singleServerConfig.setPassword(password);
+        singleServerConfig.setPassword(password);
         return Redisson.create(config);
     }
 }

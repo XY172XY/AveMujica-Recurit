@@ -11,21 +11,23 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.type.JdbcType;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "am_question")
-public class Question implements BaseData {
+@TableName(value = "am_question",autoResultMap = true)
+public class Question implements BaseData, Serializable{
     @TableId(type = IdType.AUTO)
     Integer id;
     String type;
-    @TableField(typeHandler = JsonbToObjectHandler.class)
+    @TableField(typeHandler = JsonbToObjectHandler.class,jdbcType = JdbcType.OTHER)
     Map<String,Object> title;
-    @TableField(typeHandler = JsonbToObjectHandler.class)
+    @TableField(typeHandler = JsonbToObjectHandler.class,jdbcType = JdbcType.OTHER)
     Map<String,Object> content;
     Integer originScore;
     Integer currentScore;
@@ -46,6 +48,7 @@ public class Question implements BaseData {
         this.difficulty=vo.getDifficulty();
         this.questionOrder=vo.getQuestionOrder();
         this.turn=vo.getTurn();
+        this.direction=vo.getDirection();
     }
 
     public Question(QuestionUpdateVO vo){
@@ -54,9 +57,11 @@ public class Question implements BaseData {
         this.title=vo.getTitle();
         this.content=vo.getContent();
         this.originScore=vo.getOriginScore();
+        this.currentScore=this.originScore;
         this.deadline=vo.getDeadline();
         this.difficulty=vo.getDifficulty();
         this.questionOrder=vo.getQuestionOrder();
         this.turn=vo.getTurn();
+        this.direction=vo.getDirection();
     }
 }

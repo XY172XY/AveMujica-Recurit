@@ -1,5 +1,7 @@
 package avemujica.usermanage.service.impl;
 
+import avemujica.common.entity.dto.Score;
+import avemujica.common.mapper.ScoreMapper;
 import avemujica.common.utils.Const;
 import avemujica.common.utils.FlowUtils;
 import avemujica.usermanage.entity.dto.Account;
@@ -24,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
 
    @Resource
     FlowUtils  flowUtils;
+
+   @Resource
+    ScoreMapper scoreMapper;
 
     @Value("${spring.web.verify.mail-limit}")
     int verifyLimit;
@@ -87,6 +93,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
 
     //注册账户
     @Override
+    @Transactional
     public String registerAccount(@NotNull RegisterAccountVO vo){
         String code = getEmailVerifyCode(vo.getEmail());
         if(code == null)return "请先获取验证码";
@@ -100,7 +107,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
                 .setEmail(vo.getEmail())
                 .setRole(Const.ROLE_NORMAL);
         if(this.save(account)){
-            return null;
+            Score score = new Score().setUserId(account.getId()).setUsername(vo.getUsername());
+            if(scoreMapper.insert(score) == 1)return null;
+            return "意外的失败";
         }
         return "意外失败，请重新尝试";
     }

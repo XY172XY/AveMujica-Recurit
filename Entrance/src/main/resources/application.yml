@@ -43,10 +43,15 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 172.24.122.36
       port: 6379
       database: 0
       timeout: 2000ms
+      password: xyxyxy
+  cache:
+    cache-names: questionCache
+    caffeine:
+      spec: maximumSize=5000,expireAfterWrite=60s  # L1 命中 120s 默认配置
 
 server:
   port: 8080
@@ -64,4 +69,13 @@ minio:
   bucket: submit
   presign-expire-seconds: 6000  # 预签名URL有效期(秒)
 
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
 
+custom:
+  cache:
+    redis-ttl-seconds: 300       # L2 主 TTL（再加抖动）
+    jitter-seconds: 60
+    bloom:
+      name: bf:question

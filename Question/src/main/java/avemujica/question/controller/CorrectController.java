@@ -47,7 +47,8 @@ public class CorrectController implements MessageHandle {
 
     @PostMapping("/correct")
     public RestBean<String> correct(@RequestParam Integer submitId,
-                                    @RequestParam Integer score) {
-        return messageHandle(()->correctService.correct(submitId,score));
+                                    @RequestParam Integer score,
+                                    @RequestParam Integer questionId) {
+        return messageHandle(()->correctService.correct(submitId,score,questionId));
     }
 }

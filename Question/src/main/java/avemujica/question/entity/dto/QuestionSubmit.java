@@ -28,8 +28,8 @@ public class QuestionSubmit implements BaseData {
     String fileName;
 
     public QuestionSubmit(QuestionSubmitVO vo) {
-        id = vo.getId();
         userId = vo.getUserId();
         questionId = vo.getQuestionId();
+        timeRecord = LocalDateTime.now();
     };
 }

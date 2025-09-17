@@ -1,5 +1,6 @@
 package avemujica.question.entity.vo.request;
 
+import avemujica.question.entity.dto.Answer;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,5 @@ public class QuestionAddVO {
     Integer questionOrder;
     Integer turn;
     String direction;
+    Answer answer;
 }

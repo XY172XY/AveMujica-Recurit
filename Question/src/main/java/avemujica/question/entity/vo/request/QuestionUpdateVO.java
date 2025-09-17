@@ -17,7 +17,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionUpdateVO {
-    @NotBlank
     Integer id;
     String type;
     Map<String,Object> title;

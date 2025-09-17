@@ -2,6 +2,7 @@ package avemujica.question.controller;
 
 import avemujica.common.entity.MessageHandle;
 import avemujica.common.entity.RestBean;
+import avemujica.common.utils.Const;
 import avemujica.question.entity.vo.request.QuestionSubmitVO;
 import avemujica.question.entity.vo.response.SubmitRecord;
 import avemujica.question.service.SubmitService;
@@ -23,6 +24,7 @@ public class SubmitController implements MessageHandle {
                                    @RequestParam @Pattern(regexp = "(flag|choice|material)") String type,
                                    HttpServletRequest request
     ){
+        vo.setUserId((Integer) request.getAttribute(Const.ATTR_USER_ID));
         switch (type) {
             case "flag" -> {
                 return messageHandle(() -> submitService.submitFlag(vo, request.getRemoteAddr()));
@@ -32,6 +34,8 @@ public class SubmitController implements MessageHandle {
             }
             case "choice" -> {
                 String result = submitService.submitChoice(vo, request.getRemoteAddr());
+                if(result.isEmpty())return RestBean.success();
+                System.out.println(result.length());
                 if(result.charAt(0) >= '0' && result.charAt(0) <= '9') {
                     //成功返回错误的题目号，例如"1,11,24,",无序
                     return RestBean.success(result);
