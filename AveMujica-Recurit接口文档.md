@@ -1,12 +1,8 @@
-# Authentication
-
-
-
 # UserController
 
-## POST 修改密码
+## PUT changePassword
 
-POST AveMujica/api/user/change-password
+PUT /api/me/password
 
 > Body 请求参数
 
@@ -21,8 +17,8 @@ POST AveMujica/api/user/change-password
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|userId|query|integer| 否 |不需要提供|
-|body|body|[ChangePasswordVO](#schemachangepasswordvo)| 是 |旧密码和新密码|
+|userId|query|integer| 否 |none|
+|body|body|[ChangePasswordVO](#schemachangepasswordvo)| 否 |none|
 
 > 返回示例
 
@@ -43,9 +39,9 @@ POST AveMujica/api/user/change-password
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanVoid](#schemarestbeanvoid)|
 
-## POST 重新绑定邮箱
+## PUT modifyEmail
 
-POST AveMujica//api/user/modify-email
+PUT /api/me/email
 
 > Body 请求参数
 
@@ -60,8 +56,8 @@ POST AveMujica//api/user/modify-email
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|id|query|integer| 否 |不需要提供|
-|body|body|[ModifyEmailVO](#schemamodifyemailvo)| 否 |邮箱和验证码|
+|id|query|integer| 否 |none|
+|body|body|[ModifyEmailVO](#schemamodifyemailvo)| 否 |none|
 
 > 返回示例
 
@@ -86,16 +82,16 @@ POST AveMujica//api/user/modify-email
 
 ## POST 请求邮件验证码
 
-POST AveMujica//api/auth/ask-code
+POST /api/auth/verify-code
 
-请求邮件验证码，type为目的，注册，修改密码，重绑邮箱
+请求邮件验证码
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
 |email|query|string| 是 |none|
-|type|query|string| 是 |"register" \| "modify" \| "reset"|
+|type|query|string| 是 |none|
 
 > 返回示例
 
@@ -116,9 +112,9 @@ POST AveMujica//api/auth/ask-code
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanVoid](#schemarestbeanvoid)|
 
-## POST 密码重置操作
+## PUT 密码重置操作
 
-POST AveMujica//api/auth/reset-password
+PUT /api/auth/account/password
 
 密码重置操作
 
@@ -136,7 +132,7 @@ POST AveMujica//api/auth/reset-password
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|body|body|[EmailResetVO](#schemaemailresetvo)| 是 |邮箱，密码，验证码|
+|body|body|[EmailResetVO](#schemaemailresetvo)| 否 |none|
 
 > 返回示例
 
@@ -159,7 +155,7 @@ POST AveMujica//api/auth/reset-password
 
 ## POST 注册用户
 
-POST AveMujica/api/auth/register
+POST /api/auth/account
 
 注册用户
 
@@ -178,7 +174,7 @@ POST AveMujica/api/auth/register
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|body|body|[RegisterAccountVO](#schemaregisteraccountvo)| 是 |用户名，密码，邮箱，邮箱验证码|
+|body|body|[RegisterAccountVO](#schemaregisteraccountvo)| 否 |none|
 
 > 返回示例
 
@@ -201,20 +197,22 @@ POST AveMujica/api/auth/register
 
 # SubmitController
 
-## POST 提交题目
+## POST submitFlag
 
-POST AveMujica/api/submit
+POST /api/submits/flag
 
 > Body 请求参数
 
-```yaml
+```json
 {
-"id": 0,
-"userId": 0,
-"questionId": 0,
-"originScore": 0,
-"flag": "",
-"options": 
+  "id": 0,
+  "userId": 0,
+  "questionId": 0,
+  "originScore": 0,
+  "flag": "string",
+  "options": {
+    "key": "string"
+  }
 }
 ```
 
@@ -222,9 +220,7 @@ POST AveMujica/api/submit
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|type|query|string| 是 |题目类型 "flag" \| "choice" \| "material"|
-|body|body|object| 是 |none|
-|» file|body|string(binary)| 否 |提交的附件|
+|body|body|[QuestionSubmitVO](#schemaquestionsubmitvo)| 否 |none|
 
 > 返回示例
 
@@ -245,9 +241,102 @@ POST AveMujica/api/submit
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
 
-## POST 获取提交记录
+## POST submitChoice
 
-POST /api/submit/get
+POST /api/submits/choice
+
+> Body 请求参数
+
+```json
+{
+  "id": 0,
+  "userId": 0,
+  "questionId": 0,
+  "originScore": 0,
+  "flag": "string",
+  "options": {
+    "key": "string"
+  }
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|[QuestionSubmitVO](#schemaquestionsubmitvo)| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{
+  "id": 0,
+  "code": 0,
+  "data": "",
+  "message": ""
+}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
+
+## POST submitMaterial
+
+POST /api/submits/material
+
+> Body 请求参数
+
+```yaml
+id: 0
+userId: 0
+questionId: 0
+originScore: 0
+flag: string
+options.key: null
+file: string
+
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|object| 否 |none|
+|» id|body|integer| 否 |none|
+|» userId|body|integer| 否 |none|
+|» questionId|body|integer| 否 |none|
+|» originScore|body|integer| 否 |none|
+|» flag|body|string| 否 |none|
+|» options.key|body|any| 否 |none|
+|» file|body|string(binary)| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{
+  "id": 0,
+  "code": 0,
+  "data": "",
+  "message": ""
+}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
+
+## GET getSubmitRecord
+
+GET /api/submits
 
 ### 请求参数
 
@@ -281,17 +370,18 @@ POST /api/submit/get
 
 # CorrectController
 
-## POST 获取已经批改的提交
+## GET getSubmit
 
-POST /api/admin/get-corrected-submit
+GET /api/admin/questions/{questionId}/submits
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|question_id|query|integer| 是 |none|
+|questionId|path|integer| 是 |none|
 |page|query|integer| 是 |none|
 |size|query|integer| 是 |none|
+|status|query|string| 是 |none|
 
 > 返回示例
 
@@ -322,56 +412,15 @@ POST /api/admin/get-corrected-submit
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanListQuestionSubmit](#schemarestbeanlistquestionsubmit)|
 
-## POST 获取未批改的提交
+## GET downLoad
 
-POST /api/admin/get-uncorrected-submit
-
-### 请求参数
-
-|名称|位置|类型|必选|说明|
-|---|---|---|---|---|
-|question_id|query|integer| 是 |none|
-|page|query|integer| 是 |none|
-|size|query|integer| 是 |none|
-
-> 返回示例
-
-> 200 Response
-
-```json
-{
-  "id": 0,
-  "code": 0,
-  "data": [
-    {
-      "id": 0,
-      "userId": 0,
-      "questionId": 0,
-      "timeRecord": "",
-      "score": 0,
-      "count": 0,
-      "fileName": ""
-    }
-  ],
-  "message": ""
-}
-```
-
-### 返回结果
-
-|状态码|状态码含义|说明|数据模型|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanListQuestionSubmit](#schemarestbeanlistquestionsubmit)|
-
-## POST 获取附件下载链接
-
-POST AveMujica/api/admin/down-load
+GET /api/admin/files/{fileName}
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|fileName|query|string| 是 |none|
+|fileName|path|string| 是 |none|
 
 > 返回示例
 
@@ -392,15 +441,15 @@ POST AveMujica/api/admin/down-load
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
 
-## POST 批改提交
+## PUT correct
 
-POST /api/admin/correct
+PUT /api/admin/submits/{submitId}/score
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|submitId|query|integer| 是 |none|
+|submitId|path|integer| 是 |none|
 |score|query|integer| 是 |none|
 |questionId|query|integer| 是 |none|
 
@@ -425,9 +474,9 @@ POST /api/admin/correct
 
 # QuestionManageController
 
-## POST 上传题目
+## POST 请完整上传题目信息
 
-POST AveMujica/api/question/admin/add
+POST /api/admin/questions
 
 请完整上传题目信息
 
@@ -465,7 +514,7 @@ POST AveMujica/api/question/admin/add
 |---|---|---|---|---|
 |nonce|query|string| 是 |none|
 |timestamp|query|integer| 是 |none|
-|body|body|[QuestionAddVO](#schemaquestionaddvo)| 否 |title,content是HashMap|
+|body|body|[QuestionAddVO](#schemaquestionaddvo)| 否 |none|
 
 > 返回示例
 
@@ -486,9 +535,9 @@ POST AveMujica/api/question/admin/add
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
 
-## POST 题目更新
+## PUT 题目更新接口,请上传完整题目信息
 
-POST /api/question/admin/update
+PUT /api/admin/questions/{id}
 
 题目更新接口,请上传完整题目信息
 
@@ -517,9 +566,10 @@ POST /api/question/admin/update
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|nonce|query|string| 是 |none|
-|timestamp|query|integer| 是 |none|
-|body|body|[QuestionUpdateVO](#schemaquestionupdatevo)| 是 |title,content是HashMap|
+|id|path|integer| 是 |none|
+|X-Nonce|header|string| 是 |none|
+|X-Timestamp|header|string| 是 |none|
+|body|body|[QuestionUpdateVO](#schemaquestionupdatevo)| 否 |none|
 
 > 返回示例
 
@@ -540,9 +590,9 @@ POST /api/question/admin/update
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
 
-## POST 删除题目
+## DELETE 删除题目
 
-POST /api/question/admin/delete
+DELETE /api/admin/questions/{id}
 
 删除题目
 
@@ -550,9 +600,9 @@ POST /api/question/admin/delete
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|id|query|integer| 是 |none|
-|nonce|query|string| 是 |防重放随机数|
-|timestamp|query|integer| 是 |请求时间戳|
+|id|path|integer| 是 |none|
+|X-Nonce|header|string| 是 |none|
+|X-Timestamp|header|string| 是 |none|
 
 > 返回示例
 
@@ -573,19 +623,19 @@ POST /api/question/admin/delete
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanString](#schemarestbeanstring)|
 
-## POST 获取题目列表
+## GET selectQuestionByDirectionAndTurn
 
-POST /api/question/select-direction-turn
+GET /api/questions
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|direction|query|string| 否 |方向|
-|turn|query|integer| 否 |轮次|
-|page|query|integer| 是 |页数，默认size = 10|
-|nonce|query|string| 是 |防重放随机数|
-|timestamp|query|integer| 是 |请求时间戳|
+|direction|query|string| 否 |none|
+|turn|query|integer| 否 |none|
+|page|query|integer| 是 |none|
+|X-Nonce|header|string| 是 |none|
+|X-Timestamp|header|string| 是 |none|
 
 > 返回示例
 
@@ -625,17 +675,17 @@ POST /api/question/select-direction-turn
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|[RestBeanListQuestion](#schemarestbeanlistquestion)|
 
-## POST 获取详细题目内容
+## GET selectQuestionDetail
 
-POST /api/question/select-detail
+GET /api/questions/{id}/detail
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|id|query|integer| 是 |题目id|
-|nonce|query|string| 是 |防重放时间戳|
-|timestamp|query|integer| 是 |请求时间戳|
+|id|path|integer| 是 |none|
+|X-Nonce|header|string| 是 |none|
+|X-Timestamp|header|string| 是 |none|
 
 > 返回示例
 
@@ -670,7 +720,7 @@ POST /api/question/select-detail
 
 # ErrorPageController
 
-## GET 错误处理
+## GET error
 
 GET /${server.error.path:${error.path:/error}}
 
@@ -695,19 +745,19 @@ GET /${server.error.path:${error.path:/error}}
 
 # ChartController
 
-## POST 获取排行榜
+## GET getChart
 
-POST /api/chart/get
+GET /api/charts
 
 ### 请求参数
 
 |名称|位置|类型|必选|说明|
 |---|---|---|---|---|
-|direction|query|string| 否 |方向|
-|page|query|integer| 是 |页数|
-|size|query|integer| 是 |每页数据量|
-|nonce|query|string| 是 |防重放随机数|
-|timestamp|query|integer| 是 |请求时间戳|
+|direction|query|string| 否 |none|
+|page|query|integer| 是 |none|
+|size|query|integer| 是 |none|
+|X-Nonce|header|string| 是 |none|
+|X-Timestamp|header|string| 是 |none|
 
 > 返回示例
 
@@ -726,6 +776,9 @@ POST /api/chart/get
         "": 0
       },
       "producedScores": {
+        "": 0
+      },
+      "directionScores": {
         "": 0
       },
       "totalScore": 0
